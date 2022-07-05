@@ -3,22 +3,22 @@ import React from 'react'
 export default function Atividade(props) {
 
   const prioridade = {
-    '0': {
+    'NaoDefinido': {
       label: 'Não informado',
       icon: '',
       color: 'black'
     },
-    '1': {
+    'Baixa': {
       label: 'Baixa',
       icon: 'smile',
       color: 'success'
     },
-    '2': {
+    'Normal': {
       label: 'Normal',
       icon: 'meh',
       color: 'secondary'
     },
-    '3': {
+    'Alta': {
       label: 'Alta',
       icon: 'frown',
       color: 'danger'
@@ -54,7 +54,7 @@ export default function Atividade(props) {
           </button>
           <button 
             className='btn btn-sm btn-danger'
-            onClick={() => props.deletarAtividade(props.atividade.id)}
+            onClick={() => props.handleToggleConfirmModal(props.atividade.id)}
           >
             <i className="fas fa-trash me-1"></i>
             Excluir
