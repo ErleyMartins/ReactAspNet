@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProAtividade.API.Data;
-using ProAtividade.API.Models;
+using ProAtividade.Domain.Entities;
+using ProAtividade.Domain.Interfaces.Services;
 
 namespace ProAtividade.API.Controllers
 {
@@ -13,11 +14,11 @@ namespace ProAtividade.API.Controllers
     [Route("api/[controller]")]
     public class AtividadeController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IAtividadeService _atividadeService;
 
-        public AtividadeController(DataContext context)
+        public AtividadeController(IAtividadeService atividadeService)
         {
-            _context = context;
+            _atividadeService = atividadeService;
         }
 
         [HttpGet]
@@ -25,14 +26,11 @@ namespace ProAtividade.API.Controllers
         {
             try
             {
-                IQueryable<Atividade> query =_context.Atividades.AsNoTracking();
-
-                return Ok(await query.OrderBy(atividade => atividade.Id).ToArrayAsync());
+                return Ok(await _atividadeService.GetAllAtividadeAsync());
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -41,13 +39,13 @@ namespace ProAtividade.API.Controllers
         {
             try
             {
-                IQueryable<Atividade> query =_context.Atividades.AsNoTracking();
+                Atividade atividade = await _atividadeService.GetByIdAtividadeAsync(id);
+                
+                if (atividade == null) return NoContent();
 
-                return Ok(await query.Where(atividade => atividade.Id == id)
-                                     .OrderByDescending(atividade => atividade.Id)
-                                     .FirstOrDefaultAsync());
+                return Ok(atividade);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -60,12 +58,12 @@ namespace ProAtividade.API.Controllers
             {
                 if (atividade == null) return BadRequest("Não é possível adicionar uma atividade nula.");
 
-                _context.Add<Atividade>(atividade);
-                if (await _context.SaveChangesAsync() <= 0) throw new Exception("Ocorre um erro ao salvar a atividade");
-
+                atividade = await _atividadeService.AddAtividade(atividade);
+                if (atividade == null) throw new Exception("Ocorreu um erro ao gravar uma nova atividade");
+                
                 return Ok(atividade);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -79,13 +77,12 @@ namespace ProAtividade.API.Controllers
                 if (atividade == null) return BadRequest("Não é possível atualizar uma atividade nula.");
                 else if (atividade.Id <= 0) return BadRequest("É necessario informar um id para atualizar");
                
-                _context.Update<Atividade>(atividade);
-        
-                if(await _context.SaveChangesAsync() <= 0) throw new Exception("Ocorre um erro ao realizar a atualização da atividade");
+                atividade = await _atividadeService.UpdateAtividade(atividade);
+                if (atividade == null) throw new Exception("Ocorreu um erro ao atualizar uma nova atividade");
 
                 return Ok(atividade);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -96,18 +93,11 @@ namespace ProAtividade.API.Controllers
         {
             try
             {
-                if (id <= 0) return BadRequest("É necessario informar um id para excluir");
-               
-                IQueryable<Atividade> query =_context.Atividades.AsNoTracking();
-                var atividade = await query.Where(atividade => atividade.Id == id)
-                                     .OrderBy(atividade => atividade.Id)
-                                     .FirstOrDefaultAsync();
+                if (id <= 0) return BadRequest("É necessario informar uma atividade para excluir");
 
-                _context.Remove(atividade);
-                
-                return Ok(await _context.SaveChangesAsync() > 0);
+                return Ok(new { sucesso = await _atividadeService.DeleteAtividade(id) });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }

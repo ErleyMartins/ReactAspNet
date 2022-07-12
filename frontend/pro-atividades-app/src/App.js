@@ -101,7 +101,7 @@ function App() {
       </Modal>
 
       <Modal 
-        size='sm'
+        size='md'
         show={toggleConfirmModal} 
         onHide={handleToggleConfirmModal}
       >
