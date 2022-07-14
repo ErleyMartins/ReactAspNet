@@ -6,12 +6,12 @@ export default function Menu() {
   return (
     <Navbar bg="dark" expand="lg" variant='dark'>
       <Container>
-        <Navbar.Brand as={NavLink} activeClassName='active' to="/">Activy</Navbar.Brand>
+        <Navbar.Brand as={NavLink} className={navData => navData.isActive ? 'active' : ''} to="/">Activy</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={NavLink} activeClassName='active' to="/cliente/lista">Clientes</Nav.Link>
-            <Nav.Link as={NavLink} activeClassName='active' to="/atividade/lista">Atividades</Nav.Link>
+            <Nav.Link as={NavLink} className={navData => navData.isActive ? 'active' : ''} to="/cliente/lista">Clientes</Nav.Link>
+            <Nav.Link as={NavLink} className={navData => navData.isActive ? 'active' : ''} to="/atividade/lista">Atividades</Nav.Link>
           </Nav>
           <Nav>
             <NavDropdown align='end' title="Usuário" id="basic-nav-dropdown">

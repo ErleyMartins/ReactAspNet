@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TitlePage from '../../components/TitlePage';
 
 
@@ -36,7 +36,7 @@ const clientes = [
 ];
 
 export default function ClienteLista() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [termoBusca, setTermoBusca] = useState('');
 
   const handleInputChange = (input) => {
@@ -44,7 +44,7 @@ export default function ClienteLista() {
   }
 
   const novoCliente = () => {
-    history.push('/cliente/detalhe');
+    navigate('/cliente/detalhe');
   }
 
   const clientesFiltrados = clientes.filter(cliente => {
@@ -95,13 +95,13 @@ export default function ClienteLista() {
                 <div>
                   <button 
                     className='btn btn-sm btn-outline-primary me-2'
-                    onClick={() => history.push(`/cliente/detalhe/${cliente.id}`)}
+                    onClick={() => navigate(`/cliente/detalhe/${cliente.id}`)}
                   >
                     <i className='fa fa-user-edit me-1'></i>
                     Editar
                   </button>
-                  <button className='btn btn-sm btn-outline-danger me-1'>
-                    <i className='fa fa-user-times'></i>
+                  <button className='btn btn-sm btn-outline-danger'>
+                    <i className='fa fa-user-times me-1'></i>
                     Inativar
                   </button>
                 </div>

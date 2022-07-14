@@ -1,10 +1,10 @@
 import React from 'react'
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap'
 import TitlePage from '../../components/TitlePage'
 
 export default function ClienteForm() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   return (
@@ -12,7 +12,7 @@ export default function ClienteForm() {
         <TitlePage titulo={`Cliente Detalhes ${ id == null ? '' : id }`}>
           <Button 
             variant='secondary'
-            onClick={() => history.goBack()}
+            onClick={() => navigate('/cliente/lista')}
           >
             <i className="fa fa-chevron-circle-left"></i>
           </Button>
